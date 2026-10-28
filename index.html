@@ -53,6 +53,9 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;margin:0;text-wrap:
 .desc{color:var(--muted);font-size:13px;margin:0;flex:1}
 .tag{align-self:flex-start;font:600 11px var(--body);letter-spacing:.04em;padding:2px 8px;border-radius:4px;background:var(--pink);color:var(--pink-ink)}
 .tag.dozen{background:var(--butter);color:#2A211C}
+.tag.pet{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.check{flex-direction:row;align-items:center;gap:8px;font-weight:500}
+.check input{width:18px;height:18px;margin:0;accent-color:var(--ink)}
 .stepper{display:flex;align-items:center;gap:6px}
 .stepper button{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:600 18px var(--body);cursor:pointer;line-height:1}
 .stepper button:disabled{opacity:.35;cursor:not-allowed}
@@ -102,7 +105,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="wrap">
   <header>
     <h1>Corner <span>Crumb</span> Bakery</h1>
-    <div class="hours"><b>Order ahead for pickup</b><br>Tue–Sun 7:00 AM–2:00 PM · Closed Mondays</div>
+    <div class="hours"><b>Order ahead for pickup</b><br>Tue–Sun 7:00 AM–2:00 PM · Closed Mondays<br>Pets welcome on the patio</div>
   </header>
 
   <main id="shop" class="layout">
@@ -131,6 +134,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         <legend>Contact</legend>
         <label for="name">Name<input type="text" id="name" autocomplete="name"></label>
         <label for="phone">Phone<input type="tel" id="phone" autocomplete="tel" placeholder="(806) 555-0142"></label>
+        <label class="check" for="pet"><input type="checkbox" id="pet"> Bringing a pet? We'll set out a water bowl.</label>
         <label for="notes">Notes for the baker (optional)<textarea id="notes" maxlength="200" placeholder="Slice the sourdough, please"></textarea></label>
       </fieldset>
 
@@ -157,6 +161,10 @@ const MENU = [
   {id:"lemon", cat:"Cookies & bars", name:"Lemon bar", price:3.50, desc:"Shortbread base, tart curd."},
   {id:"carrot", cat:"Whole cakes", name:"8-inch carrot cake", price:38.00, desc:"Cream cheese frosting. Serves 10–12.", notice:48, max:3},
   {id:"choc", cat:"Whole cakes", name:"6-inch chocolate layer cake", price:32.00, desc:"Fudge frosting. Serves 6–8.", notice:48, max:3},
+  {id:"pup-pb", cat:"For pets", name:"Peanut butter & pumpkin biscuit", price:2.00, desc:"Oat flour, xylitol-free peanut butter, pumpkin.", pet:true},
+  {id:"pupcake", cat:"For pets", name:"Carrot pupcake", price:4.50, desc:"Carrot and oat cake with plain yogurt frosting.", pet:true},
+  {id:"pup-sp", cat:"For pets", name:"Sweet potato chews, bag of 6", price:6.00, desc:"Slow-baked sweet potato, nothing added.", pet:true},
+  {id:"barkday", cat:"For pets", name:"4-inch barkday cake", price:18.00, desc:"Peanut butter and banana, yogurt frosting.", pet:true, notice:48, max:3},
 ];
 const CATS = ["All", ...new Set(MENU.map(m => m.cat))];
 const OPEN = 7*60, LAST_SLOT = 13*60+30, STEP = 30, MIN_LEAD_H = 2, MAX_DAYS = 14;
@@ -199,6 +207,7 @@ function renderMenu(){
         <div class="item-top"><span class="item-name">${m.name}</span><span class="price">${money(m.price)}</span></div>
         <p class="desc">${m.desc}</p>
         ${m.dozen ? `<span class="tag dozen">Baker's dozen: 13 for the price of 12</span>` : ""}
+        ${m.pet ? `<span class="tag pet">Made for dogs: no chocolate, xylitol, or raisins</span>` : ""}
         ${m.notice ? `<span class="tag">Needs ${m.notice} hours' notice</span>` : ""}
         <div class="stepper">
           <button type="button" data-dec="${m.id}" aria-label="Remove one ${m.name}" ${q ? "" : "disabled"}>−</button>
@@ -269,7 +278,7 @@ function showReview(){
       <span class="tno">NOT YET PLACED</span>
       <ul class="lines">${cartLines().map(l => `<li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span><span class="amt">${money(l.total)}</span></li>`).join("")}</ul>
       <div class="total"><span>Total, pay at pickup</span><span class="amt">${money(cartTotal())}</span></div>
-      <dl class="kv"><dt>Pickup</dt><dd>${when}</dd><dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
+      <dl class="kv"><dt>Pickup</dt><dd>${when}</dd><dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${$("pet").checked ? `<dt>Pet</dt><dd>Coming along (water bowl ready)</dd>` : ""}${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
     </div>
     <div class="actions">
       <button type="button" class="btn ghost" id="edit">Edit order</button>
@@ -293,7 +302,7 @@ function placeOrder(when){
 }
 function resetAll(){
   state.cart = {}; ["date","name","phone","notes"].forEach(id => $(id).value = "");
-  $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
+  $("pet").checked = false; $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
 }
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
