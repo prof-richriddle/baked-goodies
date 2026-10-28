@@ -12,11 +12,13 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 | 4 | It should operate 24/7. |
 | 5 | (Uploaded an image of a cartoon yellow Labrador with a blue collar and an orange ball; added as the bakery mascot.) |
 | 6 | (Uploaded three more images: an orange tabby cat, a gray and white cat, and a terrier puppy.) Add images to site. |
+| 7 | (Uploaded the Corner Crumb Bakery logo.) Push. |
 
 ## Main features
 
 - **Sweet and savory lists:** 17 items in list form, grouped into Sweet (pastries, cookies and bars, whole cakes), Savory (breads, bagels and kolaches), and For pets, with filter buttons for All, Sweet, Savory, and For pets.
 - **Color theme:** ivory and beige background with orange and blue accents. The page stays ivory even when a device is set to dark mode.
+- **Logo:** the Corner Crumb Bakery logo replaces the text title in the header (`images/logo.png`).
 - **Pet portraits:** four round pet portraits (Labrador, orange tabby, gray and white cat, terrier) next to the bakery name, saved in `images/`.
 - **Pet treats:** dog biscuits, a carrot pupcake, sweet potato chews, and a barkday cake (48 hours' notice), each labeled as made for dogs with no chocolate, xylitol, or raisins.
 - **Pet check-in:** a "Bringing a pet?" box so the bakery can set out a water bowl; it shows on the review page.
