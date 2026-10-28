@@ -114,7 +114,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="wrap">
   <header>
     <h1>Corner <span>Crumb</span> Bakery</h1>
-    <div class="hours"><b>Order ahead for pickup</b><br>Tue–Sun 7:00 AM–2:00 PM · Closed Mondays<br>Pets welcome on the patio</div>
+    <div class="hours"><b>Order ahead for pickup</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
   </header>
 
   <main id="shop" class="layout">
@@ -176,7 +176,7 @@ const MENU = [
   {id:"barkday", group:"For pets", cat:"Treats", name:"4-inch barkday cake", price:18.00, desc:"Peanut butter and banana, yogurt frosting.", pet:true, notice:48, max:3},
 ];
 const GROUPS = ["All", "Sweet", "Savory", "For pets"];
-const OPEN = 7*60, LAST_SLOT = 13*60+30, STEP = 30, MIN_LEAD_H = 2, MAX_DAYS = 14;
+const OPEN = 0, LAST_SLOT = 23*60+30, STEP = 30, MIN_LEAD_H = 2, MAX_DAYS = 14;
 const state = { cart:{}, group:"All" };
 const $ = id => document.getElementById(id);
 const money = n => "$" + n.toFixed(2);
@@ -250,7 +250,6 @@ function parseDate(s){ const [y,m,d] = s.split("-").map(Number); return new Date
 function slotsFor(dateStr){
   if(!dateStr) return { closed:false, slots:[] };
   const day = parseDate(dateStr);
-  if(day.getDay() === 1) return { closed:true, slots:[] };
   const earliest = Date.now() + leadHours()*3600e3, slots = [];
   for(let m = OPEN; m <= LAST_SLOT; m += STEP){
     const t = new Date(day); t.setHours(0, m, 0, 0);
@@ -262,7 +261,6 @@ const fmtTime = m => { const h = Math.floor(m/60), mm = m%60; return `${((h+11)%
 function renderTimes(){
   const sel = $("time"), prev = sel.value, { closed, slots } = slotsFor($("date").value);
   if(!$("date").value){ sel.innerHTML = `<option value="">Pick a date first</option>`; return; }
-  if(closed){ sel.innerHTML = `<option value="">Closed Mondays</option>`; return; }
   const open = slots.filter(s => s.ok);
   sel.innerHTML = open.length
     ? `<option value="">Choose a time</option>` + open.map(s => `<option value="${s.m}">${fmtTime(s.m)}</option>`).join("")
@@ -274,7 +272,6 @@ function validate(){
   const errs = [], lines = cartLines(), dateStr = $("date").value, t = $("time").value;
   if(!lines.length) errs.push("Add at least one item to your order.");
   if(!dateStr) errs.push("Choose a pickup date.");
-  else if(parseDate(dateStr).getDay() === 1) errs.push("We're closed Mondays. Choose another day.");
   else if(!t) errs.push(leadHours() >= 48 ? "Choose a pickup time. Cakes need 48 hours' notice, so pick a later date if no times show." : "Choose a pickup time.");
   if(!$("name").value.trim()) errs.push("Enter the name for the order.");
   if($("phone").value.replace(/\D/g,"").length !== 10) errs.push("Enter a 10-digit phone number so we can reach you.");
