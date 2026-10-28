@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Corner Crumb Orders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: menu grid on the left, sticky order slip on the right; stacks on phones */
+:root{
+  --bg:#EEF1EF; --surface:#FFFFFF; --ink:#2A211C; --muted:#6B625C; --line:#D5DAD6;
+  --butter:#F2C14E; --pink:#F6D6DC; --pink-ink:#7A2E3D; --error:#B3261E; --ok:#2E6B45;
+  --btn-bg:#2A211C; --btn-fg:#F2C14E;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1B1816; --surface:#25211F; --ink:#F3EEE8; --muted:#A79E97; --line:#3A3431;
+  --butter:#F2C14E; --pink:#4A2730; --pink-ink:#F6C6D0; --error:#FF8A80; --ok:#7FD39C;
+  --btn-bg:#F2C14E; --btn-fg:#1B1816; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1B1816; --surface:#25211F; --ink:#F3EEE8; --muted:#A79E97; --line:#3A3431;
+  --butter:#F2C14E; --pink:#4A2730; --pink-ink:#F6C6D0; --error:#FF8A80; --ok:#7FD39C;
+  --btn-bg:#F2C14E; --btn-fg:#1B1816; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-block:20px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;
+  padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;letter-spacing:-.01em}
+h1 span{background:var(--butter);color:#2A211C;padding:0 .15em;border-radius:4px}
+.hours{font-size:13px;color:var(--muted);text-align:right}
+.hours b{color:var(--ink);font-weight:600}
+h2{font-family:var(--display);font-weight:700;font-size:20px;margin:0;text-wrap:balance}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.chip{font:600 13px var(--body);padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat{margin-bottom:24px}
+.cat h3{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.item.in{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.item-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.item-name{font-weight:600;font-size:15px;line-height:1.3}
+.price{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.desc{color:var(--muted);font-size:13px;margin:0;flex:1}
+.tag{align-self:flex-start;font:600 11px var(--body);letter-spacing:.04em;padding:2px 8px;border-radius:4px;background:var(--pink);color:var(--pink-ink)}
+.tag.dozen{background:var(--butter);color:#2A211C}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:600 18px var(--body);cursor:pointer;line-height:1}
+.stepper button:disabled{opacity:.35;cursor:not-allowed}
+.stepper input{width:48px;height:34px;text-align:center;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:600 15px var(--mono);font-variant-numeric:tabular-nums}
+
+.slip{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px);background:var(--surface);border:1.5px solid var(--ink);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+@media (max-width:860px){.slip{position:static}}
+.lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lines li{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.lines .q{font-family:var(--mono);color:var(--muted);margin-right:6px}
+.lines .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lines .note{display:block;font-size:12px;color:var(--ok)}
+.empty{color:var(--muted);font-size:14px;margin:0}
+.total{display:flex;justify-content:space-between;font-weight:600;border-top:1.5px dashed var(--line);padding-top:10px}
+.total .amt{font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;min-width:0}
+input[type=text],input[type=tel],input[type=date],select,textarea{font:400 14px var(--body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box;min-width:0}
+textarea{resize:vertical;min-height:52px}
+.hint{font-size:12px;color:var(--muted)}
+.errors{margin:0;padding:10px 12px 10px 28px;border-radius:8px;border:1.5px solid var(--error);color:var(--error);font-size:13px}
+.btn{font:700 15px var(--display);padding:12px 16px;border-radius:10px;border:0;background:var(--btn-bg);color:var(--btn-fg);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.link{background:none;border:0;color:var(--muted);font:500 13px var(--body);text-decoration:underline;cursor:pointer;padding:0;align-self:flex-start}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
+
+/* Review & confirmation ticket */
+.ticket-wrap{max-width:520px;margin:8px auto 0;display:flex;flex-direction:column;gap:16px}
+.ticket{background:var(--surface);border:1.5px solid var(--ink);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:14px;position:relative}
+.ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink);transform:translateY(-50%)}
+.ticket::before{left:-10px;clip-path:inset(0 0 0 50%)}
+.ticket::after{right:-10px;clip-path:inset(0 50% 0 0)}
+.tno{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:500;min-width:0;overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.actions .btn{flex:1 1 180px}
+.ok{color:var(--ok);font-weight:600;margin:0}
+@media (prefers-reduced-motion:no-preference){.item,.chip,.btn{transition:border-color .15s, background .15s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Corner <span>Crumb</span> Bakery</h1>
+    <div class="hours"><b>Order ahead for pickup</b><br>Tue–Sun 7:00 AM–2:00 PM · Closed Mondays</div>
+  </header>
+
+  <main id="shop" class="layout">
+    <section aria-labelledby="menu-h">
+      <h2 id="menu-h" style="margin-bottom:12px">Today's case</h2>
+      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+      <div id="menu"></div>
+    </section>
+
+    <aside class="slip" aria-labelledby="slip-h">
+      <h2 id="slip-h">Your order</h2>
+      <ul class="lines" id="lines"></ul>
+      <div class="total"><span>Total</span><span class="amt" id="total">$0.00</span></div>
+      <button class="link" id="clear" type="button">Clear order</button>
+
+      <fieldset>
+        <legend>Pickup</legend>
+        <div class="row">
+          <label for="date">Date<input type="date" id="date"></label>
+          <label for="time">Time<select id="time"><option value="">Pick a date first</option></select></label>
+        </div>
+        <span class="hint" id="date-hint">Order at least 2 hours ahead. Cakes need 48 hours.</span>
+      </fieldset>
+
+      <fieldset>
+        <legend>Contact</legend>
+        <label for="name">Name<input type="text" id="name" autocomplete="name"></label>
+        <label for="phone">Phone<input type="tel" id="phone" autocomplete="tel" placeholder="(806) 555-0142"></label>
+        <label for="notes">Notes for the baker (optional)<textarea id="notes" maxlength="200" placeholder="Slice the sourdough, please"></textarea></label>
+      </fieldset>
+
+      <ul class="errors" id="errors" hidden></ul>
+      <button class="btn" id="review" type="button">Review order</button>
+    </aside>
+  </main>
+
+  <section id="reviewView" class="ticket-wrap" hidden aria-live="polite"></section>
+</div>
+
+<script>
+const MENU = [
+  {id:"sour", cat:"Breads", name:"Country sourdough loaf", price:8.50, desc:"Two-day ferment, dark crust."},
+  {id:"rye", cat:"Breads", name:"Seeded rye", price:9.00, desc:"Caraway, sunflower, flax."},
+  {id:"bag", cat:"Breads", name:"Baguette", price:3.75, desc:"Baked every two hours."},
+  {id:"crois", cat:"Pastries", name:"Butter croissant", price:4.25, desc:"Laminated with cultured butter."},
+  {id:"pac", cat:"Pastries", name:"Pain au chocolat", price:4.75, desc:"Two bars of dark chocolate."},
+  {id:"kol-s", cat:"Pastries", name:"Sausage & jalapeño kolache", price:3.50, desc:"Sweet dough, smoked sausage."},
+  {id:"kol-a", cat:"Pastries", name:"Apricot kolache", price:3.00, desc:"Classic Czech-Texas fruit kolache."},
+  {id:"bgl-p", cat:"Bagels", name:"Plain bagel", price:1.75, desc:"Boiled, then baked.", dozen:true},
+  {id:"bgl-e", cat:"Bagels", name:"Everything bagel", price:1.75, desc:"Sesame, poppy, garlic, onion, salt.", dozen:true},
+  {id:"ccc", cat:"Cookies & bars", name:"Brown butter chocolate chip", price:3.25, desc:"Flaky salt on top."},
+  {id:"lemon", cat:"Cookies & bars", name:"Lemon bar", price:3.50, desc:"Shortbread base, tart curd."},
+  {id:"carrot", cat:"Whole cakes", name:"8-inch carrot cake", price:38.00, desc:"Cream cheese frosting. Serves 10–12.", notice:48, max:3},
+  {id:"choc", cat:"Whole cakes", name:"6-inch chocolate layer cake", price:32.00, desc:"Fudge frosting. Serves 6–8.", notice:48, max:3},
+];
+const CATS = ["All", ...new Set(MENU.map(m => m.cat))];
+const OPEN = 7*60, LAST_SLOT = 13*60+30, STEP = 30, MIN_LEAD_H = 2, MAX_DAYS = 14;
+const state = { cart:{}, cat:"All" };
+const $ = id => document.getElementById(id);
+const money = n => "$" + n.toFixed(2);
+const byId = id => MENU.find(m => m.id === id);
+
+/* Baker's dozen: every 13th bagel is free */
+function lineTotal(item, qty){
+  const free = item.dozen ? Math.floor(qty/13) : 0;
+  return { total:(qty - free) * item.price, free };
+}
+function cartLines(){
+  return Object.entries(state.cart).filter(([,q]) => q > 0).map(([id,q]) => {
+    const item = byId(id); return { item, qty:q, ...lineTotal(item, q) };
+  });
+}
+const cartTotal = () => cartLines().reduce((s,l) => s + l.total, 0);
+const leadHours = () => Math.max(MIN_LEAD_H, ...cartLines().map(l => l.item.notice || 0));
+
+function setQty(id, q){
+  const max = byId(id).max || 24;
+  q = Math.max(0, Math.min(max, Math.round(Number(q) || 0)));
+  if(q === 0) delete state.cart[id]; else state.cart[id] = q;
+  renderMenu(); renderSlip(); renderTimes();
+}
+
+function renderChips(){
+  $("chips").innerHTML = CATS.map(c =>
+    `<button type="button" class="chip" aria-pressed="${c===state.cat}" data-cat="${c}">${c}</button>`).join("");
+}
+function renderMenu(){
+  const cats = state.cat === "All" ? CATS.slice(1) : [state.cat];
+  $("menu").innerHTML = cats.map(cat => `
+    <div class="cat"><h3>${cat}</h3><div class="grid">
+    ${MENU.filter(m => m.cat === cat).map(m => {
+      const q = state.cart[m.id] || 0, max = m.max || 24;
+      return `<article class="item${q ? " in" : ""}">
+        <div class="item-top"><span class="item-name">${m.name}</span><span class="price">${money(m.price)}</span></div>
+        <p class="desc">${m.desc}</p>
+        ${m.dozen ? `<span class="tag dozen">Baker's dozen: 13 for the price of 12</span>` : ""}
+        ${m.notice ? `<span class="tag">Needs ${m.notice} hours' notice</span>` : ""}
+        <div class="stepper">
+          <button type="button" data-dec="${m.id}" aria-label="Remove one ${m.name}" ${q ? "" : "disabled"}>−</button>
+          <input id="qty-${m.id}" type="number" inputmode="numeric" min="0" max="${max}" value="${q}" data-qty="${m.id}" aria-label="Quantity of ${m.name}">
+          <button type="button" data-inc="${m.id}" aria-label="Add one ${m.name}" ${q >= max ? "disabled" : ""}>+</button>
+        </div>
+      </article>`;}).join("")}
+    </div></div>`).join("");
+}
+function renderSlip(){
+  const lines = cartLines();
+  $("lines").innerHTML = lines.length ? lines.map(l => `
+    <li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span>
+    <span class="amt">${money(l.total)}</span></li>`).join("")
+    : `<li class="empty">Nothing yet. Add items from the menu.</li>`;
+  $("total").textContent = money(cartTotal());
+  $("clear").hidden = !lines.length;
+}
+
+/* Pickup dates and times */
+function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+function parseDate(s){ const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function slotsFor(dateStr){
+  if(!dateStr) return { closed:false, slots:[] };
+  const day = parseDate(dateStr);
+  if(day.getDay() === 1) return { closed:true, slots:[] };
+  const earliest = Date.now() + leadHours()*3600e3, slots = [];
+  for(let m = OPEN; m <= LAST_SLOT; m += STEP){
+    const t = new Date(day); t.setHours(0, m, 0, 0);
+    slots.push({ m, ok: t.getTime() >= earliest });
+  }
+  return { closed:false, slots };
+}
+const fmtTime = m => { const h = Math.floor(m/60), mm = m%60; return `${((h+11)%12)+1}:${String(mm).padStart(2,"0")} ${h<12?"AM":"PM"}`; };
+function renderTimes(){
+  const sel = $("time"), prev = sel.value, { closed, slots } = slotsFor($("date").value);
+  if(!$("date").value){ sel.innerHTML = `<option value="">Pick a date first</option>`; return; }
+  if(closed){ sel.innerHTML = `<option value="">Closed Mondays</option>`; return; }
+  const open = slots.filter(s => s.ok);
+  sel.innerHTML = open.length
+    ? `<option value="">Choose a time</option>` + open.map(s => `<option value="${s.m}">${fmtTime(s.m)}</option>`).join("")
+    : `<option value="">No times left this day</option>`;
+  if(open.some(s => String(s.m) === prev)) sel.value = prev;
+}
+
+function validate(){
+  const errs = [], lines = cartLines(), dateStr = $("date").value, t = $("time").value;
+  if(!lines.length) errs.push("Add at least one item to your order.");
+  if(!dateStr) errs.push("Choose a pickup date.");
+  else if(parseDate(dateStr).getDay() === 1) errs.push("We're closed Mondays. Choose another day.");
+  else if(!t) errs.push(leadHours() >= 48 ? "Choose a pickup time. Cakes need 48 hours' notice, so pick a later date if no times show." : "Choose a pickup time.");
+  if(!$("name").value.trim()) errs.push("Enter the name for the order.");
+  if($("phone").value.replace(/\D/g,"").length !== 10) errs.push("Enter a 10-digit phone number so we can reach you.");
+  return errs;
+}
+
+function showReview(){
+  const errs = validate();
+  $("errors").hidden = !errs.length;
+  $("errors").innerHTML = errs.map(e => `<li>${e}</li>`).join("");
+  if(errs.length) return;
+  const d = parseDate($("date").value);
+  const when = d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}) + " at " + fmtTime(+$("time").value);
+  const notes = $("notes").value.trim();
+  $("reviewView").innerHTML = `
+    <h2>Check your order</h2>
+    <div class="ticket">
+      <span class="tno">NOT YET PLACED</span>
+      <ul class="lines">${cartLines().map(l => `<li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span><span class="amt">${money(l.total)}</span></li>`).join("")}</ul>
+      <div class="total"><span>Total, pay at pickup</span><span class="amt">${money(cartTotal())}</span></div>
+      <dl class="kv"><dt>Pickup</dt><dd>${when}</dd><dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="edit">Edit order</button>
+      <button type="button" class="btn" id="place">Place order</button>
+    </div>`;
+  $("shop").hidden = true; $("reviewView").hidden = false; window.scrollTo(0,0);
+  $("edit").onclick = () => { $("reviewView").hidden = true; $("shop").hidden = false; };
+  $("place").onclick = () => placeOrder(when);
+}
+function placeOrder(when){
+  const no = "CC-" + String(Math.floor(1000 + Math.random()*9000));
+  $("reviewView").innerHTML = `
+    <div class="ticket">
+      <span class="tno">ORDER ${no}</span>
+      <h2>Order placed</h2>
+      <p class="ok">We'll have it boxed and ready ${when}.</p>
+      <p class="hint" style="margin:0">Give your name or ${no} at the counter. Pay at pickup.</p>
+    </div>
+    <button type="button" class="btn ghost" id="again">Start a new order</button>`;
+  $("again").onclick = () => { resetAll(); $("reviewView").hidden = true; $("shop").hidden = false; };
+}
+function resetAll(){
+  state.cart = {}; ["date","name","phone","notes"].forEach(id => $(id).value = "");
+  $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
+}
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Wiring */
+$("chips").addEventListener("click", e => { const c = e.target.dataset.cat; if(c){ state.cat = c; renderChips(); renderMenu(); } });
+$("menu").addEventListener("click", e => {
+  const inc = e.target.dataset.inc, dec = e.target.dataset.dec;
+  if(inc) setQty(inc, (state.cart[inc]||0) + 1);
+  if(dec) setQty(dec, (state.cart[dec]||0) - 1);
+});
+$("menu").addEventListener("change", e => { if(e.target.dataset.qty) setQty(e.target.dataset.qty, e.target.value); });
+$("date").addEventListener("change", renderTimes);
+$("clear").addEventListener("click", () => { state.cart = {}; renderMenu(); renderSlip(); renderTimes(); });
+$("review").addEventListener("click", showReview);
+
+const today = new Date(), maxD = new Date(); maxD.setDate(today.getDate() + MAX_DAYS);
+$("date").min = ymd(today); $("date").max = ymd(maxD);
+renderChips(); renderMenu(); renderSlip(); renderTimes();
+</script>
+</body>
+</html>
