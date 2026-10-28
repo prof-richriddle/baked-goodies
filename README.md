@@ -8,10 +8,12 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 |---|--------|
 | 1 | Build a simple online ordering tool for a neighborhood bakery. Customers should be able to browse baked goods, view prices, select quantities, choose a pickup date and time, and review their order before submitting it. Task: Generate a working prototype. Describe its main features and suggest three tests to check that it works correctly. |
 | 2 | Pet-friendly atmosphere where pets and owners can enjoy a pastry. Hence, pet-friendly pastries are available for purchase. |
+| 3 | Color theme of ivory/beige with pops of orange and blue similar to Secret Life of Pets movie color scheme. Customers should be able to select baked goods from a list but categorized into sweet goods and savory ones. |
 
 ## Main features
 
-- **Menu with prices:** 17 items in six categories (breads, pastries, bagels, cookies and bars, whole cakes, for pets), with a filter by category.
+- **Sweet and savory lists:** 17 items in list form, grouped into Sweet (pastries, cookies and bars, whole cakes), Savory (breads, bagels and kolaches), and For pets, with filter buttons for All, Sweet, Savory, and For pets.
+- **Color theme:** ivory and beige background with orange and blue accents; works in light and dark mode.
 - **Pet treats:** dog biscuits, a carrot pupcake, sweet potato chews, and a barkday cake (48 hours' notice), each labeled as made for dogs with no chocolate, xylitol, or raisins.
 - **Pet check-in:** a "Bringing a pet?" box so the bakery can set out a water bowl; it shows on the review page.
 - **Quantities:** plus and minus buttons or typed numbers; limit of 24 per item (3 per cake).
