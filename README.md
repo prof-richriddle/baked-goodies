@@ -10,11 +10,13 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 | 2 | Pet-friendly atmosphere where pets and owners can enjoy a pastry. Hence, pet-friendly pastries are available for purchase. |
 | 3 | Color theme of ivory/beige with pops of orange and blue similar to Secret Life of Pets movie color scheme. Customers should be able to select baked goods from a list but categorized into sweet goods and savory ones. |
 | 4 | It should operate 24/7. |
+| 5 | (Uploaded an image of a cartoon yellow Labrador with a blue collar and an orange ball; added as the bakery mascot.) |
 
 ## Main features
 
 - **Sweet and savory lists:** 17 items in list form, grouped into Sweet (pastries, cookies and bars, whole cakes), Savory (breads, bagels and kolaches), and For pets, with filter buttons for All, Sweet, Savory, and For pets.
 - **Color theme:** ivory and beige background with orange and blue accents; works in light and dark mode.
+- **Mascot:** a yellow Labrador in the header (`images/mascot.jpg`).
 - **Pet treats:** dog biscuits, a carrot pupcake, sweet potato chews, and a barkday cake (48 hours' notice), each labeled as made for dogs with no chocolate, xylitol, or raisins.
 - **Pet check-in:** a "Bringing a pet?" box so the bakery can set out a water bowl; it shows on the review page.
 - **Quantities:** plus and minus buttons or typed numbers; limit of 24 per item (3 per cake).

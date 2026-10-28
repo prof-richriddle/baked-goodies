@@ -34,6 +34,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;
   padding-bottom:16px;border-bottom:3px solid var(--blue);margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.mascot{width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:50% 30%;border:3px solid var(--orange);flex:none;background:var(--surface)}
+@media (max-width:520px){.mascot{width:64px;height:64px}}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;letter-spacing:-.01em}
 h1 span{background:var(--orange);color:var(--on-orange);padding:0 .15em;border-radius:4px}
 .hours{font-size:13px;color:var(--muted);text-align:right}
@@ -113,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <div class="wrap">
   <header>
-    <h1>Corner <span>Crumb</span> Bakery</h1>
+    <div class="brand"><img class="mascot" src="images/mascot.jpg" alt="Smiling yellow Labrador in a blue collar with an orange ball" width="88" height="88"><h1>Corner <span>Crumb</span> Bakery</h1></div>
     <div class="hours"><b>Order ahead for pickup</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
   </header>
 
