@@ -25,11 +25,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;
   padding-bottom:16px;border-bottom:3px solid var(--blue);margin-bottom:20px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
-.pet-row{display:flex;flex:none}
-.pet-row img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--orange);background:var(--surface)}
-.pet-row img:nth-child(even){box-shadow:0 0 0 2px var(--blue)}
-.pet-row img + img{margin-left:-14px}
-@media (max-width:520px){.pet-row img{width:44px;height:44px}.pet-row img + img{margin-left:-10px}}
+.brand{flex-wrap:wrap}
+.pet-row{display:flex;flex-wrap:wrap;gap:12px;flex:none}
+.pet-row img{width:128px;height:128px;border-radius:50%;object-fit:cover;border:4px solid var(--surface);box-shadow:0 0 0 3px var(--orange);background:var(--surface)}
+.pet-row img:nth-child(even){box-shadow:0 0 0 3px var(--blue)}
+@media (max-width:700px){.pet-row img{width:88px;height:88px}}
+@media (max-width:420px){.pet-row{gap:8px}.pet-row img{width:68px;height:68px;border-width:3px}}
 .logo{display:block;width:150px;height:auto}
 @media (max-width:520px){.logo{width:110px}}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;letter-spacing:-.01em}
@@ -111,7 +112,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <div class="wrap">
   <header>
-    <div class="brand"><div class="pet-row" role="group" aria-label="Pets welcome"><img src="images/pet-lab.jpg" alt="Yellow Labrador in a blue collar" width="64" height="64"><img src="images/pet-orange-cat.jpg" alt="Orange tabby cat" width="64" height="64"><img src="images/pet-gray-cat.jpg" alt="Gray and white fluffy cat" width="64" height="64"><img src="images/pet-terrier.jpg" alt="Terrier puppy in an orange collar" width="64" height="64"></div><h1><img class="logo" src="images/logo.png" alt="Corner Crumb Bakery" width="360" height="344"></h1></div>
+    <div class="brand"><h1><img class="logo" src="images/logo.png" alt="Corner Crumb Bakery" width="360" height="344"></h1><div class="pet-row" role="group" aria-label="Pets welcome"><img src="images/pet-lab.jpg" alt="Yellow Labrador in a blue collar" width="128" height="128"><img src="images/pet-orange-cat.jpg" alt="Orange tabby cat" width="128" height="128"><img src="images/pet-gray-cat.jpg" alt="Gray and white fluffy cat" width="128" height="128"><img src="images/pet-terrier.jpg" alt="Terrier puppy in an orange collar" width="128" height="128"></div></div>
     <div class="hours"><b>Order ahead for pickup</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
   </header>
 

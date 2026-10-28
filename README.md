@@ -14,13 +14,14 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 | 6 | (Uploaded three more images: an orange tabby cat, a gray and white cat, and a terrier puppy.) Add images to site. |
 | 7 | (Uploaded the Corner Crumb Bakery logo.) Push. |
 | 8 | When pets is selected the heading is to the left the words "For pets". (Bug fix: the For pets section shared a style name with the pet portraits, so its heading sat beside the list instead of above it.) |
+| 9 | Put the pets images to the right of the logo and give big pictures of cuteness. |
 
 ## Main features
 
 - **Sweet and savory lists:** 17 items in list form, grouped into Sweet (pastries, cookies and bars, whole cakes), Savory (breads, bagels and kolaches), and For pets, with filter buttons for All, Sweet, Savory, and For pets.
 - **Color theme:** ivory and beige background with orange and blue accents. The page stays ivory even when a device is set to dark mode.
 - **Logo:** the Corner Crumb Bakery logo replaces the text title in the header (`images/logo.png`).
-- **Pet portraits:** four round pet portraits (Labrador, orange tabby, gray and white cat, terrier) next to the bakery name, saved in `images/`.
+- **Pet portraits:** four big round pet portraits (Labrador, orange tabby, gray and white cat, terrier) to the right of the logo, shown large (128 px on desktop, smaller on phones), saved in `images/`.
 - **Pet treats:** dog biscuits, a carrot pupcake, sweet potato chews, and a barkday cake (48 hours' notice), each labeled as made for dogs with no chocolate, xylitol, or raisins.
 - **Pet check-in:** a "Bringing a pet?" box so the bakery can set out a water bowl; it shows on the review page.
 - **Quantities:** plus and minus buttons or typed numbers; limit of 24 per item (3 per cake).
