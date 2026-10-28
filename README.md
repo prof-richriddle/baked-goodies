@@ -15,7 +15,7 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 ## Main features
 
 - **Sweet and savory lists:** 17 items in list form, grouped into Sweet (pastries, cookies and bars, whole cakes), Savory (breads, bagels and kolaches), and For pets, with filter buttons for All, Sweet, Savory, and For pets.
-- **Color theme:** ivory and beige background with orange and blue accents; works in light and dark mode.
+- **Color theme:** ivory and beige background with orange and blue accents. The page stays ivory even when a device is set to dark mode.
 - **Mascot:** a yellow Labrador in the header (`images/mascot.jpg`).
 - **Pet treats:** dog biscuits, a carrot pupcake, sweet potato chews, and a barkday cake (48 hours' notice), each labeled as made for dogs with no chocolate, xylitol, or raisins.
 - **Pet check-in:** a "Bringing a pet?" box so the bakery can set out a water bowl; it shows on the review page.

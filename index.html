@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: Sweet and Savory lists on the left, sticky order slip on the right; stacks on phones */
+/* Single ivory theme by design (user-specified palette). Layout: Sweet and Savory lists on the left, sticky order slip on the right; stacks on phones */
 :root{
-  --bg:#FBF6EC; --surface:#FFFDF8; --ink:#2B2A33; --muted:#6F6A62; --line:#E6DCC8;
+  --bg:#F5EAD7; --surface:#FFFBF2; --ink:#2B2A33; --muted:#6B6358; --line:#E3D3B8; color-scheme:light;
   --orange:#F28A2E; --orange-soft:#FDEBD8; --on-orange:#2B2A33;
   --blue:#2F7FC1; --blue-soft:#DCEBF7; --error:#B3261E; --ok:#2E6B45;
   --btn-bg:#2F7FC1; --btn-fg:#FFFFFF;
@@ -17,16 +17,6 @@
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1E1C1A; --surface:#2A2724; --ink:#F5EFE3; --muted:#B3AA9C; --line:#45403A;
-  --orange:#F5A05A; --orange-soft:#4A3220; --on-orange:#1E1C1A;
-  --blue:#7DB8EA; --blue-soft:#22374A; --error:#FF8A80; --ok:#7FD39C;
-  --btn-bg:#7DB8EA; --btn-fg:#1E1C1A; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#1E1C1A; --surface:#2A2724; --ink:#F5EFE3; --muted:#B3AA9C; --line:#45403A;
-  --orange:#F5A05A; --orange-soft:#4A3220; --on-orange:#1E1C1A;
-  --blue:#7DB8EA; --blue-soft:#22374A; --error:#FF8A80; --ok:#7FD39C;
-  --btn-bg:#7DB8EA; --btn-fg:#1E1C1A; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
