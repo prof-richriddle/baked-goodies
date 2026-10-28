@@ -15,6 +15,7 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 | 7 | (Uploaded the Corner Crumb Bakery logo.) Push. |
 | 8 | When pets is selected the heading is to the left the words "For pets". (Bug fix: the For pets section shared a style name with the pet portraits, so its heading sat beside the list instead of above it.) |
 | 9 | Put the pets images to the right of the logo and give big pictures of cuteness. |
+| 10 | 24/7 delivery to anywhere in the world - we do not ship pets only food! PUSH |
 
 ## Main features
 
@@ -27,17 +28,18 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 - **Quantities:** plus and minus buttons or typed numbers; limit of 24 per item (3 per cake).
 - **Baker's dozen pricing:** every 13th bagel is free.
 - **Running order total:** updates as items change.
-- **Pickup date and time:** open 24 hours, 7 days a week; dates from today to 14 days out; 30-minute slots around the clock (12:00 AM to 11:30 PM).
-- **Notice rules:** orders need 2 hours' notice; whole cakes and the barkday cake need 48 hours, so earlier time slots disappear when a cake is in the order.
-- **Contact info:** name and 10-digit phone required; optional notes for the baker.
+- **Pickup or delivery:** a Pickup / Delivery choice. Delivery goes anywhere in the world, 24/7, with an address form, a $8.00 fee in the US and $35.00 elsewhere, and a note that the bakery delivers food, not pets. The pet check-in box shows only for pickup.
+- **Date and time:** open 24 hours, 7 days a week; dates from today to 14 days out; 30-minute slots around the clock (12:00 AM to 11:30 PM).
+- **Notice rules:** orders need 2 hours' notice; whole cakes, the barkday cake, and international deliveries need 48 hours, so earlier time slots disappear when a cake is in the order.
+- **Contact info:** name and phone required (7 to 15 digits, so international numbers work); optional notes for the baker.
 - **Review before submitting:** a summary page with Edit order and Place order; placing the order gives an order number.
 
 ## Three tests
 
-1. **Totals and baker's dozen.** Add 2 Butter croissants and 13 Plain bagels. Expected total: $8.50 + $21.00 = **$29.50**, with "1 free (baker's dozen)" under the bagels.
+1. **Totals and baker's dozen.** Add 2 Butter croissants and 13 Plain bagels. Expected total: $8.50 + $21.00 = **$29.50**, with "1 free (baker's dozen)" under the bagels. Switch to Delivery: the total should become $37.50 (US) or $64.50 (Another country).
 2. **Pickup rules.** Choose today: the first time listed should be at least 2 hours from now, and later dates should show slots all day and night, including overnight times like 2:00 AM. Then add an 8-inch carrot cake and choose tomorrow: no time slots earlier than 48 hours from now should appear.
 3. **Review and submit.** Click Review order with an empty order and no contact info: error messages should list what is missing. Fill everything in, click Review order, check that the summary matches, click Edit order to confirm nothing was lost, then Place order and confirm an order number appears.
 
 ## Limits
 
-This is a front-end prototype. Orders are not sent or saved anywhere; there is no payment, inventory, or bakery-side view.
+This is a front-end prototype. Orders are not sent or saved anywhere; there is no payment, inventory, delivery tracking, or bakery-side view.

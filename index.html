@@ -79,6 +79,15 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;margin:0;text-wrap:
 .empty{color:var(--muted);font-size:14px;margin:0}
 .total{display:flex;justify-content:space-between;font-weight:600;border-top:1.5px dashed var(--line);padding-top:10px}
 .total .amt{font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg label{flex-direction:row;justify-content:center;align-items:center;padding:9px;cursor:pointer;font-weight:600;font-size:14px;position:relative}
+.seg label + label{border-left:1.5px solid var(--line)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--orange);color:var(--on-orange)}
+.seg label:has(input:focus-visible){outline:3px solid var(--blue);outline-offset:-3px}
+.addr{display:flex;flex-direction:column;gap:10px}
+.callout{margin:0;padding:8px 10px;border-radius:8px;background:var(--blue-soft);color:var(--ink);font-size:13px;font-weight:500}
 fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 legend{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding:0}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -113,7 +122,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="wrap">
   <header>
     <div class="brand"><h1><img class="logo" src="images/logo.png" alt="Corner Crumb Bakery" width="360" height="344"></h1><div class="pet-row" role="group" aria-label="Pets welcome"><img src="images/pet-lab.jpg" alt="Yellow Labrador in a blue collar" width="128" height="128"><img src="images/pet-orange-cat.jpg" alt="Orange tabby cat" width="128" height="128"><img src="images/pet-gray-cat.jpg" alt="Gray and white fluffy cat" width="128" height="128"><img src="images/pet-terrier.jpg" alt="Terrier puppy in an orange collar" width="128" height="128"></div></div>
-    <div class="hours"><b>Order ahead for pickup</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
+    <div class="hours"><b>Pickup or delivery anywhere in the world</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
   </header>
 
   <main id="shop" class="layout">
@@ -130,19 +139,36 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <button class="link" id="clear" type="button">Clear order</button>
 
       <fieldset>
-        <legend>Pickup</legend>
+        <legend>Pickup or delivery</legend>
+        <div class="seg" role="radiogroup" aria-label="Pickup or delivery">
+          <label><input type="radio" name="method" id="m-pickup" value="pickup" checked> Pickup</label>
+          <label><input type="radio" name="method" id="m-delivery" value="delivery"> Delivery</label>
+        </div>
+        <div id="addr" class="addr" hidden>
+          <label for="street">Street address<input type="text" id="street" autocomplete="street-address"></label>
+          <div class="row">
+            <label for="city">City<input type="text" id="city" autocomplete="address-level2"></label>
+            <label for="region">State or region<input type="text" id="region" autocomplete="address-level1"></label>
+          </div>
+          <div class="row">
+            <label for="postal">Postal code<input type="text" id="postal" autocomplete="postal-code"></label>
+            <label for="country">Country<select id="country"><option value="us">United States</option><option value="other">Another country</option></select></label>
+          </div>
+          <label for="country-name" id="country-name-row" hidden>Country name<input type="text" id="country-name" autocomplete="country-name"></label>
+          <p class="callout">We deliver food, not pets. Delivery is $8.00 in the US and $35.00 anywhere else in the world.</p>
+        </div>
         <div class="row">
           <label for="date">Date<input type="date" id="date"></label>
           <label for="time">Time<select id="time"><option value="">Pick a date first</option></select></label>
         </div>
-        <span class="hint" id="date-hint">Order at least 2 hours ahead. Cakes need 48 hours.</span>
+        <span class="hint" id="date-hint"></span>
       </fieldset>
 
       <fieldset>
         <legend>Contact</legend>
         <label for="name">Name<input type="text" id="name" autocomplete="name"></label>
-        <label for="phone">Phone<input type="tel" id="phone" autocomplete="tel" placeholder="(806) 555-0142"></label>
-        <label class="check" for="pet"><input type="checkbox" id="pet"> Bringing a pet? We'll set out a water bowl.</label>
+        <label for="phone">Phone<input type="tel" id="phone" autocomplete="tel" placeholder="+1 806 555 0142"></label>
+        <label class="check" for="pet" id="pet-row"><input type="checkbox" id="pet"> Bringing a pet? We'll set out a water bowl.</label>
         <label for="notes">Notes for the baker (optional)<textarea id="notes" maxlength="200" placeholder="Slice the sourdough, please"></textarea></label>
       </fieldset>
 
@@ -192,7 +218,13 @@ function cartLines(){
   });
 }
 const cartTotal = () => cartLines().reduce((s,l) => s + l.total, 0);
-const leadHours = () => Math.max(MIN_LEAD_H, ...cartLines().map(l => l.item.notice || 0));
+const method = () => document.querySelector('input[name="method"]:checked').value;
+const isDelivery = () => method() === "delivery";
+const isIntl = () => isDelivery() && $("country").value === "other";
+const FEE_US = 8, FEE_INTL = 35, INTL_LEAD_H = 48;
+const fee = () => !isDelivery() || !cartLines().length ? 0 : (isIntl() ? FEE_INTL : FEE_US);
+const feeLabel = () => isIntl() ? "Delivery, international" : "Delivery, US";
+const leadHours = () => Math.max(MIN_LEAD_H, isIntl() ? INTL_LEAD_H : 0, ...cartLines().map(l => l.item.notice || 0));
 
 function setQty(id, q){
   const max = byId(id).max || 24;
@@ -239,7 +271,8 @@ function renderSlip(){
     <li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span>
     <span class="amt">${money(l.total)}</span></li>`).join("")
     : `<li class="empty">Nothing yet. Add items from the menu.</li>`;
-  $("total").textContent = money(cartTotal());
+  if(fee()) $("lines").insertAdjacentHTML("beforeend", `<li><span>${feeLabel()}</span><span class="amt">${money(fee())}</span></li>`);
+  $("total").textContent = money(cartTotal() + fee());
   $("clear").hidden = !lines.length;
 }
 
@@ -270,10 +303,18 @@ function renderTimes(){
 function validate(){
   const errs = [], lines = cartLines(), dateStr = $("date").value, t = $("time").value;
   if(!lines.length) errs.push("Add at least one item to your order.");
-  if(!dateStr) errs.push("Choose a pickup date.");
-  else if(!t) errs.push(leadHours() >= 48 ? "Choose a pickup time. Cakes need 48 hours' notice, so pick a later date if no times show." : "Choose a pickup time.");
+  const word = isDelivery() ? "delivery" : "pickup";
+  if(!dateStr) errs.push(`Choose a ${word} date.`);
+  else if(!t) errs.push(leadHours() >= 48 ? `Choose a ${word} time. Cakes and international deliveries need 48 hours' notice, so pick a later date if no times show.` : `Choose a ${word} time.`);
+  if(isDelivery()){
+    if(!$("street").value.trim()) errs.push("Enter the street address for delivery.");
+    if(!$("city").value.trim()) errs.push("Enter the city for delivery.");
+    if(isIntl() && !$("country-name").value.trim()) errs.push("Enter the country for delivery.");
+    if(!isIntl() && !/^\d{5}(-\d{4})?$/.test($("postal").value.trim())) errs.push("Enter a 5-digit US ZIP code.");
+  }
   if(!$("name").value.trim()) errs.push("Enter the name for the order.");
-  if($("phone").value.replace(/\D/g,"").length !== 10) errs.push("Enter a 10-digit phone number so we can reach you.");
+  const digits = $("phone").value.replace(/\D/g,"").length;
+  if(digits < 7 || digits > 15) errs.push("Enter a phone number so we can reach you. Include the country code if you're outside the US.");
   return errs;
 }
 
@@ -285,13 +326,15 @@ function showReview(){
   const d = parseDate($("date").value);
   const when = d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}) + " at " + fmtTime(+$("time").value);
   const notes = $("notes").value.trim();
+  const addr = isDelivery() ? [$("street").value, $("city").value, $("region").value, $("postal").value, isIntl() ? $("country-name").value : "United States"].map(v => v.trim()).filter(Boolean).join(", ") : "";
+  const feeLine = fee() ? `<li><span>${feeLabel()}</span><span class="amt">${money(fee())}</span></li>` : "";
   $("reviewView").innerHTML = `
     <h2>Check your order</h2>
     <div class="ticket">
       <span class="tno">NOT YET PLACED</span>
-      <ul class="lines">${cartLines().map(l => `<li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span><span class="amt">${money(l.total)}</span></li>`).join("")}</ul>
-      <div class="total"><span>Total, pay at pickup</span><span class="amt">${money(cartTotal())}</span></div>
-      <dl class="kv"><dt>Pickup</dt><dd>${when}</dd><dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${$("pet").checked ? `<dt>Pet</dt><dd>Coming along (water bowl ready)</dd>` : ""}${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
+      <ul class="lines">${cartLines().map(l => `<li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span><span class="amt">${money(l.total)}</span></li>`).join("")}${feeLine}</ul>
+      <div class="total"><span>Total, pay ${isDelivery() ? "on delivery" : "at pickup"}</span><span class="amt">${money(cartTotal() + fee())}</span></div>
+      <dl class="kv"><dt>${isDelivery() ? "Delivery" : "Pickup"}</dt><dd>${when}</dd>${addr ? `<dt>Address</dt><dd>${esc(addr)}</dd>` : ""}<dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${!isDelivery() && $("pet").checked ? `<dt>Pet</dt><dd>Coming along (water bowl ready)</dd>` : ""}${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
     </div>
     <div class="actions">
       <button type="button" class="btn ghost" id="edit">Edit order</button>
@@ -299,22 +342,23 @@ function showReview(){
     </div>`;
   $("shop").hidden = true; $("reviewView").hidden = false; window.scrollTo(0,0);
   $("edit").onclick = () => { $("reviewView").hidden = true; $("shop").hidden = false; };
-  $("place").onclick = () => placeOrder(when);
+  $("place").onclick = () => placeOrder(when, isDelivery(), $("city").value.trim());
 }
-function placeOrder(when){
+function placeOrder(when, delivery, city){
   const no = "CC-" + String(Math.floor(1000 + Math.random()*9000));
   $("reviewView").innerHTML = `
     <div class="ticket">
       <span class="tno">ORDER ${no}</span>
       <h2>Order placed</h2>
-      <p class="ok">We'll have it boxed and ready ${when}.</p>
-      <p class="hint" style="margin:0">Give your name or ${no} at the counter. Pay at pickup.</p>
+      <p class="ok">${delivery ? `We'll deliver it to ${esc(city)} ${when}.` : `We'll have it boxed and ready ${when}.`}</p>
+      <p class="hint" style="margin:0">${delivery ? `Pay on delivery. Your order number is ${no}.` : `Give your name or ${no} at the counter. Pay at pickup.`}</p>
     </div>
     <button type="button" class="btn ghost" id="again">Start a new order</button>`;
   $("again").onclick = () => { resetAll(); $("reviewView").hidden = true; $("shop").hidden = false; };
 }
 function resetAll(){
-  state.cart = {}; ["date","name","phone","notes"].forEach(id => $(id).value = "");
+  state.cart = {}; ["date","name","phone","notes","street","city","region","postal","country-name"].forEach(id => $(id).value = "");
+  $("m-pickup").checked = true; $("country").value = "us"; renderMethod();
   $("pet").checked = false; $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
 }
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -330,10 +374,21 @@ $("menu").addEventListener("change", e => { if(e.target.dataset.qty) setQty(e.ta
 $("date").addEventListener("change", renderTimes);
 $("clear").addEventListener("click", () => { state.cart = {}; renderMenu(); renderSlip(); renderTimes(); });
 $("review").addEventListener("click", showReview);
+function renderMethod(){
+  $("addr").hidden = !isDelivery();
+  $("pet-row").hidden = isDelivery();
+  $("country-name-row").hidden = !isIntl();
+  $("date-hint").textContent = isDelivery()
+    ? "Deliveries in the US need 2 hours' notice. International deliveries and cakes need 48 hours."
+    : "Order at least 2 hours ahead. Cakes need 48 hours.";
+  renderSlip(); renderTimes();
+}
+document.querySelectorAll('input[name="method"]').forEach(r => r.addEventListener("change", renderMethod));
+$("country").addEventListener("change", renderMethod);
 
 const today = new Date(), maxD = new Date(); maxD.setDate(today.getDate() + MAX_DAYS);
 $("date").min = ymd(today); $("date").max = ymd(maxD);
-renderChips(); renderMenu(); renderSlip(); renderTimes();
+renderChips(); renderMenu(); renderMethod();
 </script>
 </body>
 </html>
