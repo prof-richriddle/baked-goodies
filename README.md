@@ -13,6 +13,7 @@ Room 2, Vibe Coding. A simple pickup-ordering tool for a fictional, pet-friendly
 | 5 | (Uploaded an image of a cartoon yellow Labrador with a blue collar and an orange ball; added as the bakery mascot.) |
 | 6 | (Uploaded three more images: an orange tabby cat, a gray and white cat, and a terrier puppy.) Add images to site. |
 | 7 | (Uploaded the Corner Crumb Bakery logo.) Push. |
+| 8 | When pets is selected the heading is to the left the words "For pets". (Bug fix: the For pets section shared a style name with the pet portraits, so its heading sat beside the list instead of above it.) |
 
 ## Main features
 
