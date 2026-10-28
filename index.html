@@ -35,8 +35,11 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 @media (max-width:520px){.logo{width:110px}}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;letter-spacing:-.01em}
 h1 span{background:var(--orange);color:var(--on-orange);padding:0 .15em;border-radius:4px}
-.hours{font-size:13px;color:var(--muted);text-align:right}
-.hours b{color:var(--ink);font-weight:600}
+.welcome{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.welcome-big{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,72px);line-height:.95;letter-spacing:-.02em;margin:0;color:var(--blue);text-wrap:balance}
+.welcome-big span{background:var(--orange);color:var(--on-orange);padding:0 .12em;border-radius:6px}
+.welcome-sub{margin:0;font-size:16px;font-weight:500;max-width:40ch}
+.welcome-note{margin:0;font-size:13px;color:var(--muted)}
 h2{font-family:var(--display);font-weight:700;font-size:20px;margin:0;text-wrap:balance}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
 @media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
@@ -122,7 +125,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="wrap">
   <header>
     <div class="brand"><h1><img class="logo" src="images/logo.png" alt="Corner Crumb Bakery" width="360" height="344"></h1><div class="pet-row" role="group" aria-label="Pets welcome"><img src="images/pet-lab.jpg" alt="Yellow Labrador in a blue collar" width="128" height="128"><img src="images/pet-orange-cat.jpg" alt="Orange tabby cat" width="128" height="128"><img src="images/pet-gray-cat.jpg" alt="Gray and white fluffy cat" width="128" height="128"><img src="images/pet-terrier.jpg" alt="Terrier puppy in an orange collar" width="128" height="128"></div></div>
-    <div class="hours"><b>Pickup or delivery anywhere in the world</b><br>Open 24 hours, 7 days a week<br>Pets welcome on the patio</div>
+    <div class="welcome">
+      <p class="welcome-big">Pets <span>welcome!</span></p>
+      <p class="welcome-sub">Fresh-baked goods and pet treats, delivered anywhere in the world, 24 hours a day, 7 days a week.</p>
+      <p class="welcome-note">We deliver food, not pets.</p>
+    </div>
   </header>
 
   <main id="shop" class="layout">
@@ -139,12 +146,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <button class="link" id="clear" type="button">Clear order</button>
 
       <fieldset>
-        <legend>Pickup or delivery</legend>
-        <div class="seg" role="radiogroup" aria-label="Pickup or delivery">
-          <label><input type="radio" name="method" id="m-pickup" value="pickup" checked> Pickup</label>
-          <label><input type="radio" name="method" id="m-delivery" value="delivery"> Delivery</label>
-        </div>
-        <div id="addr" class="addr" hidden>
+        <legend>Delivery</legend>
+        <div id="addr" class="addr">
           <label for="street">Street address<input type="text" id="street" autocomplete="street-address"></label>
           <div class="row">
             <label for="city">City<input type="text" id="city" autocomplete="address-level2"></label>
@@ -168,7 +171,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         <legend>Contact</legend>
         <label for="name">Name<input type="text" id="name" autocomplete="name"></label>
         <label for="phone">Phone<input type="tel" id="phone" autocomplete="tel" placeholder="+1 806 555 0142"></label>
-        <label class="check" for="pet" id="pet-row"><input type="checkbox" id="pet"> Bringing a pet? We'll set out a water bowl.</label>
         <label for="notes">Notes for the baker (optional)<textarea id="notes" maxlength="200" placeholder="Slice the sourdough, please"></textarea></label>
       </fieldset>
 
@@ -218,7 +220,7 @@ function cartLines(){
   });
 }
 const cartTotal = () => cartLines().reduce((s,l) => s + l.total, 0);
-const method = () => document.querySelector('input[name="method"]:checked').value;
+const method = () => "delivery";
 const isDelivery = () => method() === "delivery";
 const isIntl = () => isDelivery() && $("country").value === "other";
 const FEE_US = 8, FEE_INTL = 35, INTL_LEAD_H = 48;
@@ -334,7 +336,7 @@ function showReview(){
       <span class="tno">NOT YET PLACED</span>
       <ul class="lines">${cartLines().map(l => `<li><span><span class="q">${l.qty}×</span>${l.item.name}${l.free ? `<span class="note">${l.free} free (baker's dozen)</span>` : ""}</span><span class="amt">${money(l.total)}</span></li>`).join("")}${feeLine}</ul>
       <div class="total"><span>Total, pay ${isDelivery() ? "on delivery" : "at pickup"}</span><span class="amt">${money(cartTotal() + fee())}</span></div>
-      <dl class="kv"><dt>${isDelivery() ? "Delivery" : "Pickup"}</dt><dd>${when}</dd>${addr ? `<dt>Address</dt><dd>${esc(addr)}</dd>` : ""}<dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${!isDelivery() && $("pet").checked ? `<dt>Pet</dt><dd>Coming along (water bowl ready)</dd>` : ""}${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
+      <dl class="kv"><dt>${isDelivery() ? "Delivery" : "Pickup"}</dt><dd>${when}</dd>${addr ? `<dt>Address</dt><dd>${esc(addr)}</dd>` : ""}<dt>Name</dt><dd>${esc($("name").value.trim())}</dd><dt>Phone</dt><dd>${esc($("phone").value.trim())}</dd>${notes ? `<dt>Notes</dt><dd>${esc(notes)}</dd>` : ""}</dl>
     </div>
     <div class="actions">
       <button type="button" class="btn ghost" id="edit">Edit order</button>
@@ -358,8 +360,8 @@ function placeOrder(when, delivery, city){
 }
 function resetAll(){
   state.cart = {}; ["date","name","phone","notes","street","city","region","postal","country-name"].forEach(id => $(id).value = "");
-  $("m-pickup").checked = true; $("country").value = "us"; renderMethod();
-  $("pet").checked = false; $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
+  $("country").value = "us"; renderMethod();
+  $("errors").hidden = true; renderMenu(); renderSlip(); renderTimes();
 }
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -376,14 +378,12 @@ $("clear").addEventListener("click", () => { state.cart = {}; renderMenu(); rend
 $("review").addEventListener("click", showReview);
 function renderMethod(){
   $("addr").hidden = !isDelivery();
-  $("pet-row").hidden = isDelivery();
   $("country-name-row").hidden = !isIntl();
   $("date-hint").textContent = isDelivery()
     ? "Deliveries in the US need 2 hours' notice. International deliveries and cakes need 48 hours."
     : "Order at least 2 hours ahead. Cakes need 48 hours.";
   renderSlip(); renderTimes();
 }
-document.querySelectorAll('input[name="method"]').forEach(r => r.addEventListener("change", renderMethod));
 $("country").addEventListener("change", renderMethod);
 
 const today = new Date(), maxD = new Date(); maxD.setDate(today.getDate() + MAX_DAYS);
